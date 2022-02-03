@@ -27,7 +27,7 @@ const Paginate = (model)=>{
         }
     
         // const resultUser = users.slice(startIndex, endIndex);
-        // the skip() method will decide where to start from and the limit() method will be where to end
+        // the skip() method will decide where to start from and the limit() method will be where to end. To sort use .sort({username: -1})
         results.paginatedData = await model.find().limit(limit).skip(startIndex).exec();
         // saving paginated results on the response object
         res.paginatedResult = results;

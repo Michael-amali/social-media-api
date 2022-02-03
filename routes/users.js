@@ -154,4 +154,23 @@ router.put("/:id/unfollow", async (req, res) => {
      
 });
 
+
+// search users
+router.post("/",  async (req, res)=>{
+
+    const username = req.body.searchTerm.username.trim();
+     
+    try {
+        // return users based on username using the characters typed in the req.body
+        const users = await User.find({username: { $regex: `^${username}`, $options: 'i'}});
+        if(!users){
+            res.status(404).json("Users not found")
+        }
+        res.status(200).json(users);
+    }
+    catch(err){
+        return res.status(500).json(err);
+    }
+});
+
 module.exports = router;
