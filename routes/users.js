@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+const paginate = require("../middlewares/pagination.middleware");
 
 // get a user
 router.get("/find", async (req, res)=>{
@@ -24,7 +25,15 @@ router.get("/find", async (req, res)=>{
 });
 
 // get all users
-router.get("/", async (req, res)=>{
+// http://localhost:4000/api/users?page=1&limit=2 to get paginated result
+router.get("/", paginate.Paginate(User),  async (req, res)=>{
+
+    if(res.paginatedResult){
+        const result = res.paginatedResult;
+        // In this case the paginatedResult is only being console.logged.
+        console.log(result);
+    }
+
      
     try {
         const users = await User.find();
