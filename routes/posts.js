@@ -2,30 +2,56 @@ const router = require("express").Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
 
+// import formidable, { IncomingForm } from "formidable";
+const formidable = require("formidable");
+const { FileUpload, FileDelete } = require("../utils/fileUpload.util");
+const authenticate = require("../middlewares/auth.middleware");
+
 
 
 // CREATE POST
-router.post("/", async (req, res)=> {
+router.post("/", authenticate.verifyToken, async (req, res)=> {
 
-    try {
-        // const newPost = new Post({
-        //     userId: req.body.userId,
-        //     desc: req.body.desc,
-        //     img: req.body.desc, 
-        // });
-        const newPost = new Post(req.body);
+    // const form = new formidable.IncomingForm();
 
-        const savedPost = await newPost.save();
-        res.status(200).json(savedPost);
+    // form.parse(req, async (error, fields, files)=>{
+    //     if(error){
+    //         return res.status(500).json(error);
+    //     }
 
-    }
-    catch(err){
-        return res.status(500).json(err);
-    }
+    //     const { userId, desc, img } = fields;
+        // const media_count = Object.keys(files).length;
+        // const media_keys = Object.keys(files);
+        // let imageUrl = "";
+
+        // for(let i=0; i < media_count; i++){
+        //     const file = (files[media_keys[i]]).filepath;
+        //     const file_url = await FileUpload(file, res);
+        //     imageUrl = file_url;
+        // }
+
+        try {
+            const newPost = new Post({
+                userId: req.body.userId,
+                desc: req.body.desc,
+                img: req.body.img, 
+            });
+            // const newPost = new Post(req.body);
+    
+            const savedPost = await newPost.save();
+            return res.status(200).json(savedPost);
+    
+        }
+        catch(err){
+            return res.status(500).json({msg: "Network error: Failed to create post"});
+        }
+
+    // });
+
 })
 
 // get a post
-router.get("/find/:id", async (req, res)=>{
+router.get("/find/:id", authenticate.verifyToken, async (req, res)=>{
      
     try {
         const post = await Post.findById(req.params.id);
@@ -40,13 +66,13 @@ router.get("/find/:id", async (req, res)=>{
 });
 
 // get timeline posts (i.e. the posts of the user and the people the user followers)
-router.get("/timeline/:userId", async (req, res)=>{
+router.get("/timeline/:userId", authenticate.verifyToken, async (req, res)=>{
     try {
         const currentUser = await User.findById(req.params.userId);
-        const userPosts = await Post.find({userId: currentUser._id});
+        const userPosts = await Post.find({userId: currentUser._id}).sort({ createdAt: 'desc'}).exec();
         const friendPosts = await Promise.all(
             currentUser.followings.map((friendId) => {
-                return Post.find({userId: friendId});
+                return Post.find({userId: friendId}).sort({ createdAt: 'desc'}).exec();
             })
         )
         
@@ -58,7 +84,7 @@ router.get("/timeline/:userId", async (req, res)=>{
 });
 
 // update post [id in this case is the post id]
-router.put("/:id", async (req, res)=>{
+router.put("/:id", authenticate.verifyToken, async (req, res)=>{
      
     try {
         const post =  await Post.findById(req.params.id);
@@ -84,16 +110,23 @@ router.put("/:id", async (req, res)=>{
 
 // delete post
 // [id in this case is the post id]
-router.delete("/:id", async (req, res)=>{
+router.delete("/:id/:userId", authenticate.verifyToken, async (req, res)=>{
      
     try {
-        const post =  await Post.findById(req.params.id);
-        if(post.userId === req.body.userId){
-
+        const post = await Post.findById(req.params.id);
+        if(post.userId === req.params.userId){
+            
             try{
                 await post.deleteOne();
+                if(post.img){
+                    // Retrieving public_id from url of cloudinary image
+                    let cloudImgName = post.img.split('/').slice(-1)[0].split('.')[0];
+                    let cloudPublicID = 'social-media/'+cloudImgName;
+
+                    await FileDelete(cloudPublicID, res);
+                }
+ 
                 res.status(200).json("Post has been deleted");
-                
             }
             catch(err){
                 return res.status(500).json(err);
@@ -109,18 +142,17 @@ router.delete("/:id", async (req, res)=>{
 });
 
 // Like / dislike post
-router.put("/:id/like", async (req, res)=>{
+router.put("/:id/like/:userId", async (req, res)=>{
 
         try {
             const post = await Post.findById(req.params.id);
-            console.log(post)
             
-            if(!post.likes.includes(req.body.userId)){
-                await post.updateOne({ $push: { likes: req.body.userId}});
+            if(!post.likes.includes(req.params.userId)){
+                await post.updateOne({ $push: { likes: req.params.userId}});
                 res.status(200).json("Post has been liked");
             }
             else{
-                await post.updateOne({ $pull: { likes: req.body.userId}});
+                await post.updateOne({ $pull: { likes: req.params.userId}});
                 res.status(200).json("Post has been disliked");
             }
         }
@@ -128,6 +160,25 @@ router.put("/:id/like", async (req, res)=>{
             return res.status(500).json(err);
         } 
 });
+
+
+// get user's all posts
+router.get('/profile/:username/:id', async (req, res)=>{
+    try{
+        const user = await User.findOne({username: req.params.username});
+        if(req.params.id === user._id.toString()){
+            const posts = await Post.find({userId: user._id}).sort({ createdAt: 'desc'}).exec();
+            return res.status(200).json(posts);
+        }
+        else {
+            return res.status(400).json({msg: "Posts not found"})
+        }
+   
+    }
+    catch(err){
+        return res.status(500).json(err);
+    }
+})
 
 
 module.exports = router;

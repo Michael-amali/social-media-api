@@ -9,7 +9,6 @@ router.get("/find", async (req, res)=>{
     const userId = req.query.userId;
     const username = req.query.username;
 
-     
     try {
         // You can get user by using /users/find?userId=61ed23addb78f9829511fcd0 OR /users/find?username=myk
         const user = userId ? await User.findById(userId) : await User.findOne({username: username});
@@ -73,7 +72,7 @@ router.put("/:id", async (req, res)=>{
             }
         }
         else{
-            return res.status(403).json("You update only your account")
+            return res.status(403).json("You update can only your account")
         }
     }
     catch(err){
@@ -84,13 +83,12 @@ router.put("/:id", async (req, res)=>{
 router.delete("/:id", async (req, res)=>{
      
     try {
-
         if(req.body.userId === req.params.id || req.body.isAdmin){
             const user = await User.findByIdAndDelete(req.params.id);
             res.status(200).json("Account deleted");
        }
         else{
-            return res.status(403).json("You can only update your account")
+            return res.status(403).json("You can only delete your account")
         }
     }
     catch(err){
@@ -139,7 +137,7 @@ router.put("/:id/unfollow", async (req, res) => {
 
             }
             else{
-                res.status(403).json("You dont followed the user")
+                res.status(403).json("You don't followed the user")
             }
 
         }
@@ -153,6 +151,31 @@ router.put("/:id/unfollow", async (req, res) => {
     }
      
 });
+
+
+// Get friends
+router.get('/friends/:userId', async(req, res)=>{
+    try{
+        const user = await User.findById(req.params.userId);
+        const friends = await Promise.all(
+            user.followings.map((friendId)=>{
+                return User.findById(friendId);
+            })
+        );
+
+        // Since we don't want all the fields of the friends, we will extract what we want
+        let friendList = [];
+        friends.map((friend)=>{
+            const { _id, username, profilePicture } = friend;
+            friendList.push({ _id, username, profilePicture });
+        });
+        return res.status(200).json(friendList);
+
+    }
+    catch(err){
+        return res.status(500).json(err);
+    }
+})
 
 
 // search users
