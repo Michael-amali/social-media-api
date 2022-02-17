@@ -9,6 +9,8 @@ const cors = require("cors");
 const userRoute = require("./routes/users");
 const postRoute = require("./routes/posts");
 const authRoute = require("./routes/auth");
+const conversationRoute = require("./routes/conversations");
+const messageRoute = require("./routes/messages");
 const multer = require("multer");
 
 mongoose.connect(process.env.MONGO_URL)
@@ -46,6 +48,11 @@ app.post("/api/upload", upload.single("file"), (req, res)=>{
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/conversations", conversationRoute);
+app.use("/api/messages", messageRoute);
+
+
+
 
 app.listen(process.env.PORT || 4000, ()=>{
     console.log("Server started");
