@@ -17,13 +17,29 @@ router.post('/', async (req, res)=>{
     } 
 });
 
-// get conv of user
 
+// get conv of user
 router.get('/:userId', async(req, res)=>{
     try{
         // it will go through each conversation and check members array to see if userId is in the array, if so, it will return the conversations
         const conversation = await Conversation.find({
             members: {$in: [req.params.userId]}
+        })
+        return res.status(200).json(conversation);
+    } 
+    catch(err){
+        return res.status(500).json(err);
+    } 
+});
+
+
+// get conv includes two userId
+
+router.get('/find/:firstUserId/:secondUserId', async(req, res)=>{
+    try{
+        // it will go through each conversation and check members array to see if firstUserId and secondUserId is in the array, if so, it will return the conversations
+        const conversation = await Conversation.findOne({
+            members: {$all: [req.params.firstUserId, req.params.secondUserId]}
         })
         return res.status(200).json(conversation);
     } 

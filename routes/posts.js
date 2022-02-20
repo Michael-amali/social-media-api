@@ -141,6 +141,24 @@ router.delete("/:id/:userId", authenticate.verifyToken, async (req, res)=>{
     }
 });
 
+// Delete image from cloudinary
+router.delete('/:userId/:imageUrl/remove', authenticate.verifyToken, async (req, res)=>{
+    let imageUrl = req.params.imageUrl;
+
+    try{
+        // Retrieving public_id from url of cloudinary image
+        let cloudImgName = imageUrl;
+        let cloudPublicID = 'social-media/'+cloudImgName;
+
+        await FileDelete(cloudPublicID, res);
+        res.status(200).json("Image has been deleted");
+    }
+    catch(err){
+        return res.status(500).json(err);
+    }
+
+})
+
 // Like / dislike post
 router.put("/:id/like/:userId", async (req, res)=>{
 
