@@ -43,7 +43,7 @@ router.post("/", authenticate.verifyToken, async (req, res)=> {
     
         }
         catch(err){
-            return res.status(500).json({msg: "Network error: Failed to create post"});
+            return res.status(500).json("Network error: Something went wrong");
         }
 
     // });
@@ -61,7 +61,7 @@ router.get("/find/:id", authenticate.verifyToken, async (req, res)=>{
         res.status(201).json(post);
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 });
 
@@ -79,7 +79,7 @@ router.get("/timeline/:userId", authenticate.verifyToken, async (req, res)=>{
         res.status(200).json(userPosts.concat(...friendPosts));
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 });
 
@@ -104,7 +104,7 @@ router.put("/:id", authenticate.verifyToken, async (req, res)=>{
         }
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 });
 
@@ -129,7 +129,7 @@ router.delete("/:id/:userId", authenticate.verifyToken, async (req, res)=>{
                 res.status(200).json("Post has been deleted");
             }
             catch(err){
-                return res.status(500).json(err);
+                return res.status(500).json("Network error: Something went wrong");
             }
         }
         else{
@@ -137,7 +137,7 @@ router.delete("/:id/:userId", authenticate.verifyToken, async (req, res)=>{
         }
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 });
 
@@ -154,7 +154,7 @@ router.delete('/:userId/:imageUrl/remove', authenticate.verifyToken, async (req,
         res.status(200).json("Image has been deleted");
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 
 })
@@ -175,7 +175,7 @@ router.put("/:id/like/:userId", authenticate.verifyToken, async (req, res)=>{
             }
         }
         catch(err){
-            return res.status(500).json(err);
+            return res.status(500).json("Network error: Something went wrong");
         } 
 });
 
@@ -189,12 +189,12 @@ router.get('/profile/:username/:id', authenticate.verifyToken, async (req, res)=
             return res.status(200).json(posts);
         }
         else {
-            return res.status(400).json({msg: "Posts not found"})
+            return res.status(400).json("Posts not found")
         }
    
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 })
 

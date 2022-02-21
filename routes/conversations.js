@@ -19,7 +19,7 @@ router.post('/', authenticate.verifyToken, async (req, res)=>{
             return res.status(200).json(savedConversation);
         }
         catch(err){
-            return res.status(500).json(err);
+            return res.status(500).json("Network error: Something went wrong");
         } 
     }
     // It means the sender and receiver have already created conversation, so return the old conversation
@@ -40,7 +40,7 @@ router.get('/:userId', authenticate.verifyToken, async(req, res)=>{
         return res.status(200).json(conversation);
     } 
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     } 
 });
 
@@ -55,7 +55,7 @@ router.get('/find/:firstUserId/:secondUserId', authenticate.verifyToken, async(r
         return res.status(200).json(conversation);
     } 
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     } 
 })
 
@@ -74,7 +74,7 @@ router.delete('/:userId/:partnerId/:conversationId', authenticate.verifyToken, a
                 return res.status(200).json('Conversation successfully deleted');
             }
             catch(err){
-                return res.status(500).json(err);
+                return res.status(500).json("Network error: Something went wrong");
             } 
         }
         else{

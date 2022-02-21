@@ -20,7 +20,7 @@ router.get("/find", authenticate.verifyToken, async (req, res)=>{
         res.status(201).json(others);
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 });
 
@@ -43,7 +43,7 @@ router.get("/", authenticate.verifyToken, paginate.Paginate(User),  async (req, 
         res.status(200).json(users);
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 });
 
@@ -69,7 +69,7 @@ router.put("/:id", authenticate.verifyToken, async (req, res)=>{
                 console.log(updatedUser);
             }
             catch(err){
-                return res.status(500).json(err);
+                return res.status(500).json("Network error: Something went wrong");
             }
         }
         else{
@@ -93,7 +93,7 @@ router.delete("/:id", authenticate.verifyToken, async (req, res)=>{
         }
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 });
 
@@ -115,7 +115,7 @@ router.put("/:id/follow", authenticate.verifyToken, async (req, res)=>{
 
         }
         catch(err){
-            return res.status(500).json(err);
+            return res.status(500).json("Network error: Something went wrong");
         }
 
    }
@@ -143,7 +143,7 @@ router.put("/:id/unfollow", authenticate.verifyToken, async (req, res) => {
 
         }
         catch(err){
-            return res.status(500).json(err);
+            return res.status(500).json("Network error: Something went wrong");
         }
 
    }
@@ -174,7 +174,7 @@ router.get('/friends/:userId', authenticate.verifyToken, async(req, res)=>{
 
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 })
 
@@ -188,12 +188,12 @@ router.post("/", authenticate.verifyToken, async (req, res)=>{
         // return users based on username using the characters typed in the req.body
         const users = await User.find({username: { $regex: `^${username}`, $options: 'i'}});
         if(!users){
-            res.status(404).json("Users not found")
+            return res.status(404).json("Users not found")
         }
         res.status(200).json(users);
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     }
 });
 

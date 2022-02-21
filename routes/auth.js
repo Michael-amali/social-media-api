@@ -21,15 +21,16 @@ router.post("/register", async (req, res)=>{
         return res.status(201).json(savedUser);
     }
     catch(err){
-        return res.status(500).json(err)
+        return res.status(500).json("Network error: Something went wrong");
     }
 })
 
+// LOGIN
 router.post("/login", async (req, res)=>{
     try{
         const user = await User.findOne({email: req.body.email});
         if(!user){
-            res.status(404).json("User not found")
+            return res.status(404).json("User not found")
         }
         const validPassword = await bcrypt.compare(req.body.password, user.password);
         if(!validPassword){
@@ -48,7 +49,8 @@ router.post("/login", async (req, res)=>{
         return res.status(201).json({...others, accessToken});
     }
     catch(err){
-        return res.status(500).json(err);
+        console.log(err, 'errror')
+        return res.status(500).json("Network error: Something went wrong");
     }
 
 

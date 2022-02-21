@@ -11,7 +11,7 @@ router.post('/', authenticate.verifyToken, async(req, res)=>{
         return res.status(200).json(savedMessage);
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     } 
 });
 
@@ -22,7 +22,7 @@ router.get('/:conversationId', authenticate.verifyToken, async(req, res)=>{
         return res.status(200).json(messages);
     }
     catch(err){
-        return res.status(500).json(err);
+        return res.status(500).json("Network error: Something went wrong");
     } 
 });
 
