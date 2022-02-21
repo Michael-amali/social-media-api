@@ -56,9 +56,9 @@ router.get("/find/:id", authenticate.verifyToken, async (req, res)=>{
     try {
         const post = await Post.findById(req.params.id);
         if(!post){
-            res.status(404).json("Post not found")
+            return res.status(404).json("Post not found")
         } 
-        res.status(201).json(post);
+        return res.status(201).json(post);
     }
     catch(err){
         return res.status(500).json("Network error: Something went wrong");
@@ -76,7 +76,7 @@ router.get("/timeline/:userId", authenticate.verifyToken, async (req, res)=>{
             })
         )
         
-        res.status(200).json(userPosts.concat(...friendPosts));
+        return res.status(200).json(userPosts.concat(...friendPosts));
     }
     catch(err){
         return res.status(500).json("Network error: Something went wrong");
@@ -92,7 +92,7 @@ router.put("/:id", authenticate.verifyToken, async (req, res)=>{
 
             try{
                 await post.updateOne({$set: req.body});
-                res.status(200).json("Post has been updated");
+                return res.status(200).json("Post has been updated");
                 
             }
             catch(err){
@@ -126,7 +126,7 @@ router.delete("/:id/:userId", authenticate.verifyToken, async (req, res)=>{
                     await FileDelete(cloudPublicID, res);
                 }
  
-                res.status(200).json("Post has been deleted");
+                return res.status(200).json("Post has been deleted");
             }
             catch(err){
                 return res.status(500).json("Network error: Something went wrong");
@@ -151,7 +151,7 @@ router.delete('/:userId/:imageUrl/remove', authenticate.verifyToken, async (req,
         let cloudPublicID = 'social-media/'+cloudImgName;
 
         await FileDelete(cloudPublicID, res);
-        res.status(200).json("Image has been deleted");
+        return res.status(200).json("Image has been deleted");
     }
     catch(err){
         return res.status(500).json("Network error: Something went wrong");
@@ -167,11 +167,11 @@ router.put("/:id/like/:userId", authenticate.verifyToken, async (req, res)=>{
             
             if(!post.likes.includes(req.params.userId)){
                 await post.updateOne({ $push: { likes: req.params.userId}});
-                res.status(200).json("Post has been liked");
+                return res.status(200).json("Post has been liked");
             }
             else{
                 await post.updateOne({ $pull: { likes: req.params.userId}});
-                res.status(200).json("Post has been disliked");
+                return res.status(200).json("Post has been disliked");
             }
         }
         catch(err){

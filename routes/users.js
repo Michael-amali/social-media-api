@@ -14,10 +14,10 @@ router.get("/find", authenticate.verifyToken, async (req, res)=>{
         // You can get user by using /users/find?userId=61ed23addb78f9829511fcd0 OR /users/find?username=myk
         const user = userId ? await User.findById(userId) : await User.findOne({username: username});
         if(!user){
-            res.status(404).json("User not found")
+            return res.status(404).json("User not found")
         }
         let {password, ...others} = user._doc;
-        res.status(201).json(others);
+        return res.status(201).json(others);
     }
     catch(err){
         return res.status(500).json("Network error: Something went wrong");
@@ -38,9 +38,9 @@ router.get("/", authenticate.verifyToken, paginate.Paginate(User),  async (req, 
     try {
         const users = await User.find();
         if(!users){
-            res.status(404).json("Users not found")
+            return res.status(404).json("Users not found")
         }
-        res.status(200).json(users);
+        return res.status(200).json(users);
     }
     catch(err){
         return res.status(500).json("Network error: Something went wrong");
@@ -65,7 +65,7 @@ router.put("/:id", authenticate.verifyToken, async (req, res)=>{
             }
             try{
                 const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: req.body});
-                res.status(200).json("Account has been updated");
+                return res.status(200).json("Account has been updated");
                 console.log(updatedUser);
             }
             catch(err){
@@ -86,7 +86,7 @@ router.delete("/:id", authenticate.verifyToken, async (req, res)=>{
     try {
         if(req.body.userId === req.params.id || req.body.isAdmin){
             const user = await User.findByIdAndDelete(req.params.id);
-            res.status(200).json("Account deleted");
+            return res.status(200).json("Account deleted");
        }
         else{
             return res.status(403).json("You can only delete your account")
@@ -106,11 +106,11 @@ router.put("/:id/follow", authenticate.verifyToken, async (req, res)=>{
             if(!user.followers.includes(req.body.userId)){
                 await user.updateOne({ $push: { followers: req.body.userId}});
                 await currentUser.updateOne({ $push: { followings: req.params.id}});
-                res.status(200).json("User has been followed successfully");
+                return res.status(200).json("User has been followed successfully");
 
             }
             else{
-                res.status(403).json("You already follow the user")
+                return res.status(403).json("You already follow the user")
             }
 
         }
@@ -134,11 +134,11 @@ router.put("/:id/unfollow", authenticate.verifyToken, async (req, res) => {
             if(user.followers.includes(req.body.userId)){
                 await user.updateOne({ $pull: { followers: req.body.userId}});
                 await currentUser.updateOne({ $pull: { followings: req.params.id}});
-                res.status(200).json("User has been unfollowed successfully");
+                return res.status(200).json("User has been unfollowed successfully");
 
             }
             else{
-                res.status(403).json("You don't followed the user")
+                return res.status(403).json("You don't followed the user")
             }
 
         }
@@ -190,7 +190,7 @@ router.post("/", authenticate.verifyToken, async (req, res)=>{
         if(!users){
             return res.status(404).json("Users not found")
         }
-        res.status(200).json(users);
+        return res.status(200).json(users);
     }
     catch(err){
         return res.status(500).json("Network error: Something went wrong");
