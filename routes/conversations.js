@@ -3,7 +3,7 @@ const Conversation = require("../models/Conversation");
 const authenticate = require("../middlewares/auth.middleware");
 
 // create conversation
-router.post('/', async (req, res)=>{
+router.post('/', authenticate.verifyToken, async (req, res)=>{
 
     const conversation = await Conversation.findOne({
         members: {$all: [req.body.senderId, req.body.receiverId]}
@@ -31,7 +31,7 @@ router.post('/', async (req, res)=>{
 
 
 // get conv of user
-router.get('/:userId', async(req, res)=>{
+router.get('/:userId', authenticate.verifyToken, async(req, res)=>{
     try{
         // it will go through each conversation and check members array to see if userId is in the array, if so, it will return the conversations
         const conversation = await Conversation.find({
@@ -46,7 +46,7 @@ router.get('/:userId', async(req, res)=>{
 
 
 // get conv includes two userId
-router.get('/find/:firstUserId/:secondUserId', async(req, res)=>{
+router.get('/find/:firstUserId/:secondUserId', authenticate.verifyToken, async(req, res)=>{
     try{
         // it will go through each conversation and check members array to see if firstUserId and secondUserId is in the array, if so, it will return the conversations
         const conversation = await Conversation.findOne({

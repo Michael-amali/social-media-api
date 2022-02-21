@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const Message = require("../models/Message");
+const authenticate = require("../middlewares/auth.middleware");
 
 // create message
-router.post('/', async(req, res)=>{
+router.post('/', authenticate.verifyToken, async(req, res)=>{
 
     const newMessage = new Message(req.body);
     try{
@@ -15,7 +16,7 @@ router.post('/', async(req, res)=>{
 });
 
 // Get messages
-router.get('/:conversationId', async(req, res)=>{
+router.get('/:conversationId', authenticate.verifyToken, async(req, res)=>{
     try {
         const messages = await Message.find({conversationId: req.params.conversationId});
         return res.status(200).json(messages);

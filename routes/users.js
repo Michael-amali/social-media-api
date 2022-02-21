@@ -3,9 +3,10 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const paginate = require("../middlewares/pagination.middleware");
+const authenticate = require("../middlewares/auth.middleware");
 
 // get a user
-router.get("/find", async (req, res)=>{
+router.get("/find", authenticate.verifyToken, async (req, res)=>{
     const userId = req.query.userId;
     const username = req.query.username;
 
@@ -25,7 +26,7 @@ router.get("/find", async (req, res)=>{
 
 // get all users
 // http://localhost:4000/api/users?page=1&limit=2 to get paginated result
-router.get("/", paginate.Paginate(User),  async (req, res)=>{
+router.get("/", authenticate.verifyToken, paginate.Paginate(User),  async (req, res)=>{
 
     if(res.paginatedResult){
         const result = res.paginatedResult;
@@ -47,7 +48,7 @@ router.get("/", paginate.Paginate(User),  async (req, res)=>{
 });
 
 // update user
-router.put("/:id", async (req, res)=>{
+router.put("/:id", authenticate.verifyToken, async (req, res)=>{
      
     try {
         if(req.body.userId === req.params.id || req.body.isAdmin){
@@ -80,7 +81,7 @@ router.put("/:id", async (req, res)=>{
     }
 });
 // delete user
-router.delete("/:id", async (req, res)=>{
+router.delete("/:id", authenticate.verifyToken, async (req, res)=>{
      
     try {
         if(req.body.userId === req.params.id || req.body.isAdmin){
@@ -97,7 +98,7 @@ router.delete("/:id", async (req, res)=>{
 });
 
 // Follow user
-router.put("/:id/follow", async (req, res)=>{
+router.put("/:id/follow", authenticate.verifyToken, async (req, res)=>{
     if(req.body.userId !== req.params.id || req.body.isAdmin){
         try {
             const user = await User.findById(req.params.id);
@@ -125,7 +126,7 @@ router.put("/:id/follow", async (req, res)=>{
 });
 
 // Unfollow user
-router.put("/:id/unfollow", async (req, res) => {
+router.put("/:id/unfollow", authenticate.verifyToken, async (req, res) => {
     if(req.body.userId !== req.params.id || req.body.isAdmin){
         try {
             const user = await User.findById(req.params.id);
@@ -154,7 +155,7 @@ router.put("/:id/unfollow", async (req, res) => {
 
 
 // Get friends
-router.get('/friends/:userId', async(req, res)=>{
+router.get('/friends/:userId', authenticate.verifyToken, async(req, res)=>{
     try{
         const user = await User.findById(req.params.userId);
         const friends = await Promise.all(
@@ -179,7 +180,7 @@ router.get('/friends/:userId', async(req, res)=>{
 
 
 // search users
-router.post("/",  async (req, res)=>{
+router.post("/", authenticate.verifyToken, async (req, res)=>{
 
     const username = req.body.searchTerm.username.trim();
      

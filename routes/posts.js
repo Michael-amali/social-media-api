@@ -133,7 +133,7 @@ router.delete("/:id/:userId", authenticate.verifyToken, async (req, res)=>{
             }
         }
         else{
-            return res.status(403).json("You can only delete your post")
+            return res.status(403).json("You can only delete your post");
         }
     }
     catch(err){
@@ -160,7 +160,7 @@ router.delete('/:userId/:imageUrl/remove', authenticate.verifyToken, async (req,
 })
 
 // Like / dislike post
-router.put("/:id/like/:userId", async (req, res)=>{
+router.put("/:id/like/:userId", authenticate.verifyToken, async (req, res)=>{
 
         try {
             const post = await Post.findById(req.params.id);
@@ -181,7 +181,7 @@ router.put("/:id/like/:userId", async (req, res)=>{
 
 
 // get user's all posts
-router.get('/profile/:username/:id', async (req, res)=>{
+router.get('/profile/:username/:id', authenticate.verifyToken, async (req, res)=>{
     try{
         const user = await User.findOne({username: req.params.username});
         if(req.params.id === user._id.toString()){
