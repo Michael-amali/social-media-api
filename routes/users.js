@@ -155,7 +155,7 @@ router.put("/:id/unfollow", authenticate.verifyToken, async (req, res) => {
 
 
 // Get friends
-router.get('/friends/:userId', authenticate.verifyToken, async(req, res)=>{
+router.get('/friends/:userId', async(req, res)=>{
     try{
         const user = await User.findById(req.params.userId);
         const friends = await Promise.all(
