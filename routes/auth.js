@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
 const _ = require("lodash");
-
 const sgMail = require("@sendgrid/mail");
 
 
@@ -118,6 +117,7 @@ router.put("/forgot-password", async (req, res)=>{
 
         // sendGrid configuration 2 ////////////////////////
         // const message = {
+        //     from: 'michael.acheampong@amalitech.com',
         //     to: {
         //         name: user.username,
         //         email: email

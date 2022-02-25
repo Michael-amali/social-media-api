@@ -47,6 +47,27 @@ router.get("/", authenticate.verifyToken, paginate.Paginate(User),  async (req, 
     }
 });
 
+
+// get all users using pagination
+// http://localhost:4000/api/users/paginate?page=1&limit=2 to get paginated result
+router.get("/paginate", authenticate.verifyToken, paginate.Paginate(User),  async (req, res)=>{
+     
+    try {
+        if(res.paginatedResult){
+            const paginatedUsers = res.paginatedResult;
+            // In this case the paginatedResult is only being console.logged.
+            console.log(paginatedUsers);
+            if(!paginatedUsers){
+                return res.status(404).json("Users not found")
+            }
+            return res.status(200).json(paginatedUsers);
+        }
+    }
+    catch(err){
+        return res.status(500).json("Network error: Something went wrong");
+    }
+});
+
 // update user
 router.put("/:id", authenticate.verifyToken, async (req, res)=>{
      
