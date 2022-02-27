@@ -80,48 +80,17 @@ router.put("/forgot-password", async (req, res)=>{
         console.log(accessToken)
 
         // node mailer configuration 1 ////////////////////////////////////////
-        // let transporter = nodemailer.createTransport({
-        //     service: 'gmail',
-        //     auth: {
-        //         user: 'michaelacheampongy@gmail.com',
-        //         pass: process.env.MAIL_TEST_PASS
-        //     }
-        // });
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'michaelacheampongy@gmail.com',
+                pass: process.env.MAIL_TEST_PASS
+            }
+        });
         // node mailer configuration 2 ///////////////////////////////////////////
-        // let mailOptions = {
-        //     from: "legends@gmail.com",
-        //     to: email,
-        //     subject: "Reset password",
-        //     html: `
-        //         <h1>Please click on given link to reset your password</h2>
-        //         <p><small>${process.env.CLIENT_URL}/reset_password/${accessToken}</small></p>
-        //     `
-        // }
-
-        // Update the user resetLink field
-        await user.updateOne({resetLink: accessToken});
-
-        // sending email using nodeMailer  ///////////////////////////////////////
-        // transporter.sendMail(mailOptions, (err, data)=>{
-        //     if(err){
-        //         console.log(err);
-        //         return res.status(500).json('Something went wrong');
-        //     }
-        //         console.log('Email sent');
-        //     return res.status(200).json('Email has been sent, kindly follow the instruction');
-        // });
-
-
-        // sendGrid configuration 1 ////////////////////////////
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-        // sendGrid configuration 2 ////////////////////////
-        const message = {
-            from: 'michael.acheampong@amalitech.com',
-            to: {
-                name: user.username,
-                email: email
-            },
+        let mailOptions = {
+            from: "legends@gmail.com",
+            to: email,
             subject: "Reset password",
             html: `
                 <h1>Please click on given link to reset your password</h2>
@@ -129,15 +98,46 @@ router.put("/forgot-password", async (req, res)=>{
             `
         }
 
-        // Sending mail using sendGrid ///////////////////////////////////////////
-        sgMail.send(message).then((response)=>{
-            console.log('Email sent', response)
+        // Update the user resetLink field
+        await user.updateOne({resetLink: accessToken});
+
+        // sending email using nodeMailer  ///////////////////////////////////////
+        transporter.sendMail(mailOptions, (err, data)=>{
+            if(err){
+                console.log(err);
+                return res.status(500).json('Something went wrong');
+            }
+                console.log('Email sent');
             return res.status(200).json('Email has been sent, kindly follow the instruction');
-        }).catch((err)=>{
-            console.log(err);
-            return res.status(500).json('Something went wrong');
-        
         });
+
+
+        // sendGrid configuration 1 ////////////////////////////
+        // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+        // sendGrid configuration 2 ////////////////////////
+        // const message = {
+        //     from: 'michael.acheampong@amalitech.com',
+        //     to: {
+        //         name: user.username,
+        //         email: email
+        //     },
+        //     subject: "Reset password",
+        //     html: `
+        //         <h1>Please click on given link to reset your password</h2>
+        //         <p><small>${process.env.CLIENT_URL}/reset_password/${accessToken}</small></p>
+        //     `
+        // }
+
+        // Sending mail using sendGrid ///////////////////////////////////////////
+        // sgMail.send(message).then((response)=>{
+        //     console.log('Email sent', response)
+        //     return res.status(200).json('Email has been sent, kindly follow the instruction');
+        // }).catch((err)=>{
+        //     console.log(err);
+        //     return res.status(500).json('Something went wrong');
+        
+        // });
 
 
     }
