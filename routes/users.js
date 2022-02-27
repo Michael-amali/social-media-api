@@ -31,7 +31,7 @@ router.get("/", authenticate.verifyToken, paginate.Paginate(User),  async (req, 
     if(res.paginatedResult){
         const result = res.paginatedResult;
         // In this case the paginatedResult is only being console.logged.
-        console.log(result);
+        // console.log(result);
     }
 
      
@@ -56,7 +56,7 @@ router.get("/paginate", authenticate.verifyToken, paginate.Paginate(User),  asyn
         if(res.paginatedResult){
             const paginatedUsers = res.paginatedResult;
             // In this case the paginatedResult is only being console.logged.
-            console.log(paginatedUsers);
+            // console.log(paginatedUsers);
             if(!paginatedUsers){
                 return res.status(404).json("Users not found")
             }
