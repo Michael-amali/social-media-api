@@ -27,7 +27,7 @@ mongoose.connect(process.env.MONGO_URL)
     .then(()=>{
         console.log("DB connection successful");
     })
-    .catch((err)=>{
+    .catch((err)=>{ 
         console.log(err);
     })
 
@@ -53,7 +53,7 @@ app.use(passport.session());
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
-app.use(cors());
+app.use(cors({ credentials:true, origin:'https://legends-myk.netlify.app' }));
 
 
 
