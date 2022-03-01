@@ -3,7 +3,7 @@ const passport = require('passport');
 const jwt = require("jsonwebtoken");
 
 // const clientUrl = 'http://localhost:8081';
-const clientUrl = process.env.CLIENT_URL;
+const clientUrl = 'https://legends-myk.netlify.app';
 
 
 
