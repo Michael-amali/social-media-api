@@ -11,6 +11,11 @@ const sgMail = require("@sendgrid/mail");
 router.post("/register", async (req, res)=>{
 
     try{
+        const user = await User.findOne({email: req.body.email});
+        if(!user){
+            return res.status(404).json("Email already exists")
+        }
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         // create user
@@ -185,5 +190,13 @@ router.put("/reset-password", (req, res)=>{
         return res.status(500).json("Network error: Something went wrong, Authentication error"); 
     }
 })
+
+
+// LOGOUT
+router.get('/logout', (req, res) => {
+    req.session.destroy();
+
+    return res.status(200).json("Log out successful");
+});
 
 module.exports = router;

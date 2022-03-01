@@ -2,6 +2,9 @@ const router = require("express").Router();
 const passport = require('passport');
 const jwt = require("jsonwebtoken");
 
+// const clientUrl = 'http://localhost:8081';
+const clientUrl = 'https://legends-myk.netlify.app';
+
 
 
 // @description Auth with Google
@@ -11,8 +14,8 @@ router.get("/auth/google", passport.authenticate('google', {scope: ['profile', '
 // @description Google Auth callback
 // @route GET /auth/google/callback
 router.get("/auth/google/callback", passport.authenticate('google', { 
-    successRedirect: 'http://localhost:8080/login',
-    failureRedirect: '/'
+    successRedirect: clientUrl,
+    failureRedirect: `${clientUrl}/login`
 }));
 
 router.get('/dashboard', (req, res)=>{
