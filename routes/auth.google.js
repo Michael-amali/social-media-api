@@ -14,8 +14,7 @@ router.get("/auth/google", passport.authenticate('google', {scope: ['profile', '
 // @description Google Auth callback
 // @route GET /auth/google/callback
 router.get("/auth/google/callback", passport.authenticate('google', { 
-    successRedirect: clientUrl,
-    failureRedirect: `${clientUrl}/login`
+    successRedirect: 'https://legends-myk.netlify.app',
 }));
 
 router.get('/dashboard', (req, res)=>{
