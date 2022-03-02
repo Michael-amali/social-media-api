@@ -53,7 +53,7 @@ app.use(passport.session());
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
-app.use(cors({ credentials:true, origin:'https://legends-myk.netlify.app' }));
+app.use(cors({ credentials:true, origin:'/*' }));
 
 
 
