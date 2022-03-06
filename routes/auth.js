@@ -157,8 +157,8 @@ router.put("/forgot-password", async (req, res)=>{
 
 
         // mailGun configuration 1 ////////////////////////////
-        // const DOMAIN = "sandbox1c4c44beac254dd1ac0c8259dadebfc5.mailgun.org";
-        // const mg = mailgun({apiKey: "71bfb4a9b324e8c4503b015191d13f84-e2e3d8ec-ef559e29", domain: DOMAIN});
+        // const DOMAIN = process.env.MAILGUN_DOMAIN;
+        // const mg = mailgun({apiKey: process.env.MAILGUN_API_KEY, domain: DOMAIN});
 
         // mailGun configuration 2 ////////////////////////////
         // const data = {
