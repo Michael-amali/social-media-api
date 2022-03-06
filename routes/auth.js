@@ -5,6 +5,10 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
 const _ = require("lodash");
 const sgMail = require("@sendgrid/mail");
+const mailgun = require("mailgun-js");
+
+
+
 
 
 // REGISTER
@@ -85,48 +89,17 @@ router.put("/forgot-password", async (req, res)=>{
         console.log(accessToken)
 
         // node mailer configuration 1 ////////////////////////////////////////
-        let transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'michaelacheampongy@gmail.com',
-                pass: process.env.MAIL_TEST_PASS
-            }
-        });
+        // let transporter = nodemailer.createTransport({
+        //     service: 'gmail',
+        //     auth: {
+        //         user: 'michaelacheampongy@gmail.com',
+        //         pass: process.env.MAIL_TEST_PASS
+        //     }
+        // });
         // node mailer configuration 2 ///////////////////////////////////////////
-        let mailOptions = {
-            from: "legends@gmail.com",
-            to: email,
-            subject: "Reset password",
-            html: `
-                <h1>Please click on given link to reset your password</h2>
-                <p><small>${process.env.CLIENT_URL}/reset_password/${accessToken}</small></p>
-            `
-        }
-
-        // Update the user resetLink field
-        await user.updateOne({resetLink: accessToken});
-
-        // sending email using nodeMailer  ///////////////////////////////////////
-        transporter.sendMail(mailOptions, (err, data)=>{
-            if(err){
-                console.log(err);
-                return res.status(500).json('Something went wrong');
-            }
-                console.log('Email sent');
-            return res.status(200).json('Email has been sent, kindly follow the instruction');
-        });
-
-
-        // sendGrid configuration 1 ////////////////////////////
-        // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-        // sendGrid configuration 2 ////////////////////////
-        // const message = {
-        //     from: 'michael.acheampong@amalitech.com',
-        //     to: {
-        //         name: user.username,
-        //         email: email
-        //     },
+        // let mailOptions = {
+        //     from: "legends@gmail.com",
+        //     to: email,
         //     subject: "Reset password",
         //     html: `
         //         <h1>Please click on given link to reset your password</h2>
@@ -134,14 +107,80 @@ router.put("/forgot-password", async (req, res)=>{
         //     `
         // }
 
-        // Sending mail using sendGrid ///////////////////////////////////////////
-        // sgMail.send(message).then((response)=>{
-        //     console.log('Email sent', response)
+        // Update the user resetLink field
+        await user.updateOne({resetLink: accessToken});
+
+        // sending email using nodeMailer 3 ///////////////////////////////////////
+        // transporter.sendMail(mailOptions, (err, data)=>{
+        //     if(err){
+        //         console.log(err);
+        //         return res.status(500).json('Something went wrong');
+        //     }
+        //         console.log('Email sent');
         //     return res.status(200).json('Email has been sent, kindly follow the instruction');
-        // }).catch((err)=>{
-        //     console.log(err);
-        //     return res.status(500).json('Something went wrong');
+        // });
+
+
+        // sendGrid configuration 1 ////////////////////////////
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+        // sendGrid configuration 2 ////////////////////////
+        const message = {
+            from: 'michael.acheampong@amalitech.com',
+            to: {
+                name: user.username,
+                email: email
+            },
+            templateId: process.env.SENDGRID_RESET_PASS_TEMPLATE_ID,
+            personalizations: [
+              {
+                to: [{email: email}],
+                dynamic_template_data: {
+                  subject: "Reset Password",
+                  name: user.username,
+                  url: `${process.env.CLIENT_URL}/reset_password/${accessToken}`,
+                  email: email,
+                },
+              },
+            ],
+        }
+
+        // Sending mail using sendGrid 3 ///////////////////////////////////////////
+        sgMail.send(message).then((response)=>{
+            console.log('Email sent', response)
+            return res.status(200).json('Email has been sent, kindly follow the instruction');
+        }).catch((err)=>{
+            console.log(err);
+            return res.status(500).json('Something went wrong');
         
+        });
+
+
+        // mailGun configuration 1 ////////////////////////////
+        // const DOMAIN = "sandbox1c4c44beac254dd1ac0c8259dadebfc5.mailgun.org";
+        // const mg = mailgun({apiKey: "71bfb4a9b324e8c4503b015191d13f84-e2e3d8ec-ef559e29", domain: DOMAIN});
+
+        // mailGun configuration 2 ////////////////////////////
+        // const data = {
+        //     from: "Mailgun Sandbox <postmaster@sandbox1c4c44beac254dd1ac0c8259dadebfc5.mailgun.org>",
+        //     // to: the recipient email must be added at mailGun dasboard for the recipicient to verify before the recipient can get messages
+        //     to: email,
+        //     subject: "Reset password",
+        //     text: 'home',
+        //     html: `
+        //         <h1>Please click on given link to reset your password</h2>
+        //         <p><small>${process.env.CLIENT_URL}/reset_password/${accessToken}</small></p>
+        //     `
+        // };
+
+        // Sending mail using mailGun ///////////////////////////////////////////
+        // mg.messages().send(data, (err, body) => {
+        //     if(err){
+        //         console.log(err);
+        //         return res.status(500).json('Something went wrong');
+        //     }
+        //         console.log('Email sent');
+        //     return res.status(200).json('Email has been sent, kindly follow the instruction');
         // });
 
 
