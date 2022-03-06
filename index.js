@@ -39,7 +39,7 @@ const store = new MongoDBSession({
     collection: "mySessions"
 });
 app.use(session({
-    secret: "elkj43ourf4rea/4@#43nlk36",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: store
