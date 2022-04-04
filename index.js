@@ -11,6 +11,8 @@ const postRoute = require("./routes/posts");
 const authRoute = require("./routes/auth");
 const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
+const notificationRoute = require("./routes/notifications");
+
 const multer = require("multer");
 
 // oauth related
@@ -77,10 +79,10 @@ app.post("/api/upload", upload.single("file"), (req, res)=>{
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/auth", authRoute);
-app.use(authGoogleRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
-
+app.use("/api/notifications", notificationRoute);
+app.use(authGoogleRoute);
 
 
 app.listen(process.env.PORT || 4000, ()=>{

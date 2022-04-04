@@ -70,7 +70,7 @@ router.delete('/:userId/:partnerId/:conversationId', authenticate.verifyToken, a
 
         if(conversation._id.toString() === req.params.conversationId){
             try {
-                await conversation.deleteOne()
+                await conversation.deleteOne();
                 return res.status(200).json('Conversation successfully deleted');
             }
             catch(err){
