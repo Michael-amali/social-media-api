@@ -36,7 +36,7 @@ router.delete("/:conversationId/:id", authenticate.verifyToken, async (req, res)
 		if(!notification){
 			return res.status(201).json("Notification already deleted")
 		}
-        console.log(notification.receiverId, 'yyyyyyyyyyyyyyyyy')
+        
         if(notification.receiverId === req.params.id){
             try{
                 await notification.deleteOne(); 
