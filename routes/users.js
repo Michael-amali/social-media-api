@@ -85,10 +85,12 @@ router.put("/:id", authenticate.verifyToken, async (req, res)=>{
                 }
             }
             try{
-                const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: req.body});
-                return res.status(200).json("Account has been updated");
-                console.log(updatedUser);
+                const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: req.body}, { new: true });
+                let {password, ...others} = updatedUser._doc;
+                let message = "Account has been updated";
+                return res.status(200).json({...others, message});
             }
+            
             catch(err){
                 return res.status(500).json("Network error: Something went wrong");
             }

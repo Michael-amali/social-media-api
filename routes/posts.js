@@ -91,7 +91,7 @@ router.put("/:id", authenticate.verifyToken, async (req, res)=>{
         if(post.userId === req.body.userId){
 
             try{
-                await post.updateOne({$set: req.body});
+                await post.updateOne({$set: req.body}, { new: true });
                 return res.status(200).json("Post has been updated");
                 
             }
