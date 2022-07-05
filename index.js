@@ -13,6 +13,7 @@ const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
 const notificationRoute = require("./routes/notifications");
 
+const { handleUpload } = require("./utils/handleFileUploadNew");
 const multer = require("multer");
 
 // oauth related
@@ -75,6 +76,9 @@ app.post("/api/upload", upload.single("file"), (req, res)=>{
     res.status(200).json("file has been uploaded successfully");
 })
 
+app.post("/api/upload-cloud", (req, res, next)=>{
+    handleUpload(req, res, next);
+})
 
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
