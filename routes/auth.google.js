@@ -2,7 +2,7 @@ const router = require("express").Router();
 const passport = require('passport');
 const jwt = require("jsonwebtoken");
 
-// const clientUrl = 'http://localhost:8081';
+/**  const clientUrl = 'http://localhost:8081';*/
 const clientUrl = 'https://legends-myk.netlify.app';
 
 
