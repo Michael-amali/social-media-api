@@ -88,6 +88,13 @@ app.use("/api/messages", messageRoute);
 app.use("/api/notifications", notificationRoute);
 app.use(authGoogleRoute);
 
+app.use("/", (req, res, next) => {
+    res.json({ 
+      msg: "Welcome, API endpoints are ready",
+    });
+    next();
+  });
+
 
 app.listen(process.env.PORT || 4000, ()=>{
     console.log("Server started");
