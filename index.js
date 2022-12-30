@@ -57,7 +57,7 @@ app.use(passport.session());
 app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
-app.use(cors({ credentials:true, origin: true }));
+app.use(cors());
 
 
 
